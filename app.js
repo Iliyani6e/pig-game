@@ -11,17 +11,11 @@ GAME RULES:
 
 var scores, roundScore, activePlayer;
 
-scores = [0, 0];
-roundScore = 0;
-activePlayer = 0;
+init();
+
 var diceDOM = document.querySelector(".dice");
 var btnRoll = document.querySelector(".btn-roll");
 var btnHold = document.querySelector(".btn-hold");
-
-document.getElementById("score-0").textContent = "0";
-document.getElementById("score-1").textContent = "0";
-document.getElementById("current-0").textContent = "0";
-document.getElementById("current-1").textContent = "0";
 
 // document.querySelector("#current-" + activePlayer).innerHTML =
 //   "<em>" + dice + "</em>";
@@ -47,19 +41,68 @@ btnRoll.addEventListener("click", () => {
     roundScore += dice;
     currentScore.textContent = roundScore;
   } else {
-    //Set the gobal score of the player that rolls to zero
-    //  if(activePlayer === 0){
-    //      activePlayer = 1;
-    //  }else{
-    //      activePlayer = 0;
-    //  }
-    // The next line does the same as the previous if statement it's called ternary operator
-    activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
-    roundScore = 0;
-    document.getElementById("current-0").textContent = "0";
-    document.getElementById("current-1").textContent = "0";
-    document.querySelector(".player-0-panel").classList.toggle("active");
-    document.querySelector(".player-1-panel").classList.toggle("active");
-    diceDOM.style.display = "none";
+    nextPlayer();
   }
 });
+
+btnHold.addEventListener("click", () => {
+  //Add curren score to global score
+  var globalScore = document.getElementById("score-" + activePlayer);
+
+  scores[activePlayer] += roundScore;
+
+  //Update the UI
+  globalScore.textContent = scores[activePlayer];
+
+  //Check if the player won the game
+  if (scores[activePlayer] >= 20) {
+    document.getElementById("name-" + activePlayer).textContent = "WINNER!";
+    diceDOM.style.display = "none";
+    document
+      .querySelector(".player-" + activePlayer + "-panel")
+      .classList.add("winner");
+    document
+      .querySelector(".player-" + activePlayer + "-panel")
+      .classList.remove("active");
+  } else {
+    //Next player
+    nextPlayer();
+  }
+});
+
+const nextPlayer = () => {
+  //Set the gobal score of the player that rolls to zero
+  //  if(activePlayer === 0){
+  //      activePlayer = 1;
+  //  }else{
+  //      activePlayer = 0;
+  //  }
+  // The next line does the same as the previous if statement it's called ternary operator
+  activePlayer === 0 ? (activePlayer = 1) : (activePlayer = 0);
+  roundScore = 0;
+  document.getElementById("current-0").textContent = "0";
+  document.getElementById("current-1").textContent = "0";
+  document.querySelector(".player-0-panel").classList.toggle("active");
+  document.querySelector(".player-1-panel").classList.toggle("active");
+  diceDOM.style.display = "none";
+};
+//NEW GAME BUTTON FUNCTIONALIITY
+document.querySelector(".btn-new").addEventListener("click", init);
+
+function init() {
+  scores = [0, 0];
+  roundScore = 0;
+  activePlayer = 0;
+
+  document.getElementById("score-0").textContent = "0";
+  document.getElementById("score-1").textContent = "0";
+  document.getElementById("current-0").textContent = "0";
+  document.getElementById("current-1").textContent = "0";
+  document.getElementById("name-0").textContent = "Player 1";
+  document.getElementById("name-1").textContent = "Player 2";
+  document.querySelector(".player-0-panel").classList.remove("winner");
+  document.querySelector(".player-1-panel").classList.remove("winner");
+  document.querySelector(".player-0-panel").classList.remove("active");
+  document.querySelector(".player-1-panel").classList.remove("active");
+  document.querySelector(".player-0-panel").classList.add("active");
+}
